@@ -152,5 +152,10 @@ This how to will help you to run your Fastapi app as a systemd service
    tcp        0      0 0.0.0.0:8000            0.0.0.0:*               LISTEN      1567/python3        
    tcp6       0      0 :::22                   :::*                    LISTEN      -               
    ```
-   
+
+   Check from your browser
+
+   ```
+   http://intx-app.lk.diod.top:8000/
+   ```
       
