@@ -95,5 +95,62 @@ This how to will help you to run your Fastapi app as a systemd service
        raise HTTPException(status_code=500, detail=f"Failed to install SSL certificate: {e}")
    return {"status": "success", "message": f"Domain {full_domain} deployed successfully."}
    ```
+## Configuring the Systemd Service
+   To ensure the server runs as a background service, create a systemd service file:   
+
+   ```
+   sudo nano /etc/systemd/system/intx-app.service
+   ```
+
+   Add the following content:
+
+   ```
+   [Unit]
+   Description=intx-app Python Server
+   After=network.target
+   [Service]
+   User=ubuntu
+   Group=ubuntu
+   WorkingDirectory=/home/ubuntu/fastapi-intx-app-deploy
+   ExecStart=/home/ubuntu/fastapi-intx-app-deploy/venv/bin/uvicorn main:app --host 0.0.0.0 --port 8000
+   Restart=on-failure
+   RestartSec=5s
+   [Install]
+   WantedBy=multi-user.target
+   ```
+
+   Enable and start the service:
+
+   ```
+   sudo systemctl daemon-reload
+   sudo systemctl enable intx-app.service
+   sudo systemctl start intx-app.service
+   sudo systemctl status intx-app.service
+   ```
+
+   Install `net-tools`
+
+   ```
+   sudo apt install net-tools
+   ```
    
-  
+   Check the tcp ports listening to your server IP
+
+   ```
+   netstat -tnlp
+   ```
+
+   OUTPUT: Shoud be like below
+
+   ```
+   Not all processes could be identified, non-owned process info
+   will not be shown, you would have to be root to see it all.)
+   Active Internet connections (only servers)
+   Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+   tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN      -                   
+   tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -                   
+   tcp        0      0 0.0.0.0:8000            0.0.0.0:*               LISTEN      1567/python3        
+   tcp6       0      0 :::22                   :::*                    LISTEN      -               
+   ```
+   
+      
